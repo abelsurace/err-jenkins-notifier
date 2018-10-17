@@ -6,5 +6,5 @@ Module = jenkinsnotifier
 Version = 3
 
 [Documentation]
-Description = JenkinsNotofier is an Err plugin to send status messages oasend ond job status changes and manage Jenkins CI jobs from your chat platform, this plug in is based on JenkinsBot.
+Description = JenkinsNotifier is an Err plugin to send status messages based ond job status changes and manage Jenkins CI jobs from your chat platform, this plug in is based on JenkinsBot.
 

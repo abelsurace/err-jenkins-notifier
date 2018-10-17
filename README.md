@@ -30,7 +30,7 @@ You have to add the following variables to your `config.py` file:
 ```
 JENKINS_URL = ''
 JENKINS_USERNAME = ''
-JENKINS_PASSWORD = ''
+JENKINS_TOKEN = ''
 ```
 
 Restart the bot. You can do that with the command `!restart`.

@@ -1,5 +1,5 @@
 from errbot import BotPlugin, botcmd
-from config import JENKINS_URL, JENKINS_USERNAME, JENKINS_PASSWORD
+from config import JENKINS_URL, JENKINS_USERNAME, JENKINS_TOKEN
 
 from jenkins import Jenkins, NotFoundException
 
@@ -8,7 +8,7 @@ class JenkinsNotifier(BotPlugin):
     """JenkinsBot is an Err plugin to manage Jenkins CI jobs from your chat platform like Slack."""
 
     def __init__(self, bot, name):
-        self.jenkins = Jenkins(JENKINS_URL, JENKINS_USERNAME, JENKINS_PASSWORD)
+        self.jenkins = Jenkins(JENKINS_URL, JENKINS_USERNAME, JENKINS_TOKEN)
         super().__init__(bot, name) 
 
 
