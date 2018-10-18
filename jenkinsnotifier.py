@@ -7,6 +7,9 @@ from jenkins import Jenkins, NotFoundException
 class JenkinsNotifier(BotPlugin):
     """JenkinsBot is an Err plugin to manage Jenkins CI jobs from your chat platform like Slack."""
 
+    status = {'blue':'SUCCESS', 'blue_anime':'IN PROGRESS','red': 'FAILED', 'disabled': 'DISABLED', 'aborted':'ABORTED', 'notbuilt': 'NOTBUILT'}
+
+
     def __init__(self, bot, name):
         self.jenkins = Jenkins(JENKINS_URL, JENKINS_USERNAME, JENKINS_TOKEN)
         super().__init__(bot, name) 
@@ -55,6 +58,21 @@ class JenkinsNotifier(BotPlugin):
                 if search_term.lower() in job['name'].lower()]
 
         return self.format_jobs(jobs)
+
+
+    @botcmd
+    def jn_status(self, msg, args):
+        """List Jenkins jobs with their current status."""
+
+        self.send(msg.to, "I'm getting the jobs with status Jenkins...")
+
+        search_term = args.strip().lower()
+        jobs = [job for job in self.jenkins.get_jobs()
+                if search_term.lower() in job['fullname'].lower()]
+
+        return self.format_job_status(jobs)
+
+
 
 
     @botcmd
@@ -151,3 +169,57 @@ class JenkinsNotifier(BotPlugin):
                                                  job['url'],
                                                  job['executor']) for job in jobs]).strip()
 
+    def format_job_status(self, jobs):
+         """Format All job status"""
+    @botcmd
+    def jn_queue(self, msg, args):
+        """List jobs in queue."""
+
+        self.send(msg.to, "Getting the job queue...")
+
+        jobs = self.jenkins.get_queue_info()
+
+        return self.format_queue_jobs(jobs)
+
+
+    def format_jobs(self, jobs):
+        """Format jobs list"""
+
+        if len(jobs) == 0:
+            return "I haven't found any job."
+
+        max_length = max([len(job['name']) for job in jobs])
+        return '\n'.join(['%s (%s)' % (job['name'].ljust(max_length),
+                                       job['url']) for job in jobs]).strip()
+
+
+    def format_queue_jobs(self, jobs):
+        """Format queue jobs list"""
+
+        if len(jobs) == 0:
+            return "It seems that there is not jobs in queue."
+
+        return '\n'.join(['%s - %s (%s)' % (str(job['id']),
+                                            job['task']['name'],
+                                            job['task']['url']) for job in jobs]).strip()
+
+
+    def format_running_jobs(self, jobs):
+        """Format running jobs list"""
+
+        if len(jobs) == 0:
+            return "There is no running jobs!"
+
+        return '\n'.join(['%s - %s (%s) - %s' % (str(job['number']),
+                                                 job['name'],
+                                                 job['url'],
+                                                 job['executor']) for job in jobs]).strip()
+
+    def format_job_status(self, jobs):
+        """Format job status"""
+
+        if len(jobs) == 0:
+            return "there are no jobs to return"
+#        max_length = max([len(job['fullname']) for job in jobs])
+        return '\n'.join(['%s (%s)' % (job['fullname'],
+                                       self.status[job['color']]) for job in jobs]).strip()
