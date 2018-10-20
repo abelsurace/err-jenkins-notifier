@@ -1,3 +1,4 @@
+import threading
 from errbot import BotPlugin, botcmd
 from config import JENKINS_URL, JENKINS_USERNAME, JENKINS_TOKEN
 
@@ -25,7 +26,7 @@ class JenkinsNotifier(BotPlugin):
         #    for arg in args[1:]:
         #        params[arg.split('=', 1)[0]] = arg.split('=', 1)[1]
         #except IndexError:
-        #    return "I don't like that params! Try with this format: key1=value1 key2=value2..."
+        #    return "I don'G like that params! Try with this format: key1=value1 key2=value2..."
         jobName = ''.join([args[0],' ',args[1]]) #TODO handle jobname with spaces in it, space is cosidered argument splitter  
         try:
             self.jenkins.build_job(jobName, params)
@@ -136,6 +137,20 @@ class JenkinsNotifier(BotPlugin):
         return self.format_queue_jobs(jobs)
 
 
+    @botcmd
+    def jn_msgtimer(self, msg, args):
+        """Sends messages at fix intervals."""
+        yield "Starting timer"
+        self.start_poller(5, self.my_callback)
+
+
+    def my_callback(self):
+        self.log.info('I am called every 5sec')
+
+
+
+# SUPPORT FUNCTIONS START HERE
+
     def format_jobs(self, jobs):
         """Format jobs list"""
 
@@ -169,8 +184,6 @@ class JenkinsNotifier(BotPlugin):
                                                  job['url'],
                                                  job['executor']) for job in jobs]).strip()
 
-    def format_job_status(self, jobs):
-         """Format All job status"""
     @botcmd
     def jn_queue(self, msg, args):
         """List jobs in queue."""
@@ -220,6 +233,8 @@ class JenkinsNotifier(BotPlugin):
 
         if len(jobs) == 0:
             return "there are no jobs to return"
-#        max_length = max([len(job['fullname']) for job in jobs])
         return '\n'.join(['%s (%s)' % (job['fullname'],
                                        self.status[job['color']]) for job in jobs]).strip()
+
+     
+
