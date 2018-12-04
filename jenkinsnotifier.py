@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import threading
 from errbot import BotPlugin, botcmd
 from config import JENKINS_URL, JENKINS_USERNAME, JENKINS_TOKEN
@@ -8,7 +9,8 @@ from jenkins import Jenkins, NotFoundException
 class JenkinsNotifier(BotPlugin):
     """JenkinsBot is an Err plugin to manage Jenkins CI jobs from your chat platform like Slack."""
 
-    status = {'blue':'SUCCESS', 'blue_anime':'IN PROGRESS','red': 'FAILED', 'disabled': 'DISABLED', 'aborted':'ABORTED', 'notbuilt': 'NOTBUILT'}
+    status = {'blue':'SUCCESS', 'blue_anime':'IN PROGRESS','red': 'FAILED', 'red_anime': 'IN PROGRESS', 'disabled':   'DISABLED', 'aborted':'ABORTED', 'notbuilt': 'NOTBUILT', 'yellow': 'UNSTABLE'}
+    failedjobsstring = " "
 
 
     def __init__(self, bot, name):
@@ -149,13 +151,21 @@ class JenkinsNotifier(BotPlugin):
 
     def my_callback(self):
         self.log.info('I am called every 5sec')
-        self.send(self.build_identifier("#errbottestchannel"),
-        self.get_failed_jobs, 
-        )
+        self.send(self.build_identifier("#errbottestchannel"), self.get_failed_jobs, )
 
     @botcmd 
     def jn_failed(self, msg, args):
-        return self.get_failed_jobs
+
+        """List Jenkins jobs with failed status."""
+        self.send(msg.to, "I'm getting the failed jobs ...")
+        failedJobs = []
+        search_term = args.strip().lower()
+        jobs = [job for job in self.jenkins.get_jobs()
+                if search_term.lower() in job['fullname'].lower()]
+        for job in jobs:
+            if self.status[job['color']] == 'FAILED':
+               failedJobs.append(job)
+        return self.format_job_status(failedJobs)
 
 
 
@@ -247,13 +257,22 @@ class JenkinsNotifier(BotPlugin):
 
 
     def get_failed_jobs(self):
+        failedJobs = []
         search_term = args.strip().lower()
         jobs = [job for job in self.jenkins.get_jobs()
                 if search_term.lower() in job['fullname'].lower()]
+        failedjobsstring=""
         for job in jobs:
             if self.status[job['color']] == 'FAILED':
-               failedJobs.append(job['fullname'])
-        return '\n'.join([name for name in failedJobs]).strip()
+               #failedJobs.append(job)
+               failedjobsstring = failedjobsstring + job['fullname'] + " " + self.status[job['color']
+        return faildejobstring
+        # self.failedjobsstring=""
+        # if len(failedJobs) == 0:
+        #    return "It seems that there are not failed jobs. "
+        # self.failedjobsstring =  self.failedjobsstring + '\n'.join(['%s (%s)' % (job['fullname'], self.status[job['color']]) for job in failedJobs]).strip()
+
+
         
 
      
