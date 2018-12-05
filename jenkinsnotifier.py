@@ -151,7 +151,7 @@ class JenkinsNotifier(BotPlugin):
 
     def my_callback(self):
         self.log.info('I am called every 5sec')
-        self.send(self.build_identifier("#errbottestchannel"), self.get_failed_jobs, )
+        self.send(self.build_identifier("#errbottestchannel"), "I am called every 5sec", )
 
     @botcmd 
     def jn_failed(self, msg, args):
@@ -254,23 +254,6 @@ class JenkinsNotifier(BotPlugin):
         if len(jobs) == 0:
             return "there are no jobs to return"
         return '\n'.join(['%s (%s)' % (job['fullname'], self.status[job['color']]) for job in jobs]).strip()
-
-
-    def get_failed_jobs(self):
-        failedJobs = []
-        search_term = args.strip().lower()
-        jobs = [job for job in self.jenkins.get_jobs()
-                if search_term.lower() in job['fullname'].lower()]
-        failedjobsstring=""
-        for job in jobs:
-            if self.status[job['color']] == 'FAILED':
-               #failedJobs.append(job)
-               failedjobsstring = failedjobsstring + job['fullname'] + " " + self.status[job['color']
-        return faildejobstring
-        # self.failedjobsstring=""
-        # if len(failedJobs) == 0:
-        #    return "It seems that there are not failed jobs. "
-        # self.failedjobsstring =  self.failedjobsstring + '\n'.join(['%s (%s)' % (job['fullname'], self.status[job['color']]) for job in failedJobs]).strip()
 
 
         
