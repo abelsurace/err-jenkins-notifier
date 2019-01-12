@@ -1,6 +1,6 @@
 # JenkinsNotifier
 
-JenkinsNotofier is an Errbot (<http://errbot.io>) plugin to provide Jenkins build notification over chat platform (<https://jenkins.io>) it also allows to enquire job status or start job builds on demand, it can be used with Slack and other chat platforms suppoted by Errbot. This one is inspired in <https://github.com/benvd/err-jenkins> and <https://github.com/membrive/err-jenkins>.
+JenkinsNitofier is an Errbot (<http://errbot.io>) plugin to provide Jenkins build notification over chat platform (<https://jenkins.io>) it also allows to enquire job status or start job builds on demand, it can be used with Slack and other chat platforms suppoted by Errbot. This one is inspired in <https://github.com/benvd/err-jenkins> and <https://github.com/membrive/err-jenkins>.
 
 
 ## Requirements
